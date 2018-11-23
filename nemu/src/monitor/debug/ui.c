@@ -38,6 +38,18 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+static int cmd_si(char *args);
+
+static int cmd_info(char *args);
+
+static int cmd_p(char *args);
+
+static int cmd_x(char *args);
+
+static int cmd_w(char *args);
+
+static int cmd_d(char *args);
+
 static struct {
   char *name;
   char *description;
@@ -46,6 +58,12 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  { "si [N]", "Pause the program after execute N instructions in sigle step, if N is not defined, default 1", cmd_si },
+  { "info SUBCMD", "Print status of registers or watchpoint information", cmd_info },
+  { "p EXPR", "Calculate value of the expression EXPR", cmd_p},
+  { "x N EXPR", "Calculate value of the expression EXPR, use the result as a starting memory address, output N numbers of 4 bytes continuously in hexadecimal", cmd_x},
+  { "w EXPR", "Pause the program when the value of expression EXPR change", cmd_w},
+  { "d N", "Delete the watchpoint with number N", cmd_d},
 
   /* TODO: Add more commands */
 
@@ -63,8 +81,7 @@ static int cmd_help(char *args) {
     for (i = 0; i < NR_CMD; i ++) {
       printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
     }
-  }
-  else {
+  } else {
     for (i = 0; i < NR_CMD; i ++) {
       if (strcmp(arg, cmd_table[i].name) == 0) {
         printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
@@ -73,6 +90,7 @@ static int cmd_help(char *args) {
     }
     printf("Unknown command '%s'\n", arg);
   }
+
   return 0;
 }
 
