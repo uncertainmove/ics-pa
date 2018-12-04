@@ -5,10 +5,63 @@
 #include <assert.h>
 #include <string.h>
 
+#define MAX_INT 10
+#define MAX_EXPR_NUMBER 20
+
 // this should be enough
 static char buf[65536];
+static int len = 0;
+static int expr_number = 0;
+
+static void gen_num();
+static void gen_op();
+
 static inline void gen_rand_expr() {
-  buf[0] = '\0';
+  if (expr_number >= MAX_EXPR_NUMBER) {
+    gen_num();
+    return;
+  }
+  switch(rand() % 3) {
+    case 0:
+      gen_num();
+      break;
+    case 1:
+      buf[len++] = '(';
+      gen_rand_expr();
+      buf[len++] = ')';
+      break;
+    default:
+      gen_rand_expr();
+      gen_op();
+      gen_rand_expr();
+      break;
+  }
+  buf[len] = '\0';
+}
+static void gen_num() {
+  int _number = rand() % MAX_INT + 1;
+  // printf("before gen_num: buf=%s, len=%d, number=%d\n", buf, len,_number);
+  int _length = sprintf(buf + len, "%d", _number);
+  len += _length;
+  // printf("after gen_num: buf=%s, len=%d, number=%d\n", buf, len,_number);
+}
+static void gen_op() {
+  int choose = rand() % 4;
+  assert(len + 1 < 65536);
+  switch(choose) {
+    case 0: 
+      buf[len++] = '+';
+      break;
+    case 1:
+      buf[len++] = '-';
+      break;
+    case 2: 
+      buf[len++] = '*';
+      break;
+    case 3: 
+      buf[len++] = '/';
+      break;
+  }
 }
 
 static char code_buf[65536];
